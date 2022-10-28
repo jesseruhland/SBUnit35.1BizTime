@@ -112,27 +112,35 @@ describe("PUT /invoices/:id", function () {
   test("Updates a single invoice", async function () {
     const response = await request(app)
       .put(`/invoices/${testInvoice.id}`)
-      .send({ amt: 456 });
+      .send({ amt: 456, paid: true });
     expect(response.statusCode).toEqual(200);
     expect(response.body).toEqual({
       invoice: {
         id: expect.any(Number),
         comp_code: testCompany.code,
         amt: 456,
-        paid: false,
+        paid: true,
         add_date: expect.any(String),
-        paid_date: null,
+        paid_date: expect.any(String),
       },
     });
   });
   test("Responds with 404 if can't find invoice", async function () {
-    const response = await request(app).put(`/invoices/0`).send({ amt: 456 });
+    const response = await request(app)
+      .put(`/invoices/0`)
+      .send({ amt: 456, paid: true });
     expect(response.statusCode).toEqual(404);
   });
   test("Responds with 400 if amt is not included", async function () {
     const response = await request(app)
       .put(`/invoices/${testInvoice.id}`)
-      .send({});
+      .send({ paid: false });
+    expect(response.statusCode).toEqual(400);
+  });
+  test("Responds with 400 if paid is not included", async function () {
+    const response = await request(app)
+      .put(`/invoices/${testInvoice.id}`)
+      .send({ amt: 456 });
     expect(response.statusCode).toEqual(400);
   });
 });

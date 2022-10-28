@@ -48,6 +48,7 @@ describe("GET /companies/:code", function () {
     expect(response.statusCode).toEqual(200);
     expect(response.body).toEqual({
       company: testCompany,
+      industries: [null],
       invoices: [],
     });
   });
@@ -61,36 +62,26 @@ describe("GET /companies/:code", function () {
 describe("POST /companies", function () {
   test("Creates a new company", async function () {
     const response = await request(app).post("/companies").send({
-      code: "alpha",
       name: "Google",
       description: "Search engine and more",
     });
     expect(response.statusCode).toEqual(201);
     expect(response.body).toEqual({
       company: {
-        code: "alpha",
+        code: "google",
         name: "Google",
         description: "Search engine and more",
       },
     });
   });
-  test("Responds with 400 if code is not included", async function () {
-    const response = await request(app).post("/companies").send({
-      name: "Google",
-      description: "Search engine and more",
-    });
-    expect(response.statusCode).toEqual(400);
-  });
   test("Responds with 400 if name is not included", async function () {
     const response = await request(app).post("/companies").send({
-      code: "alpha",
       description: "Search engine and more",
     });
     expect(response.statusCode).toEqual(400);
   });
   test("Responds with 400 if description is not included", async function () {
     const response = await request(app).post("/companies").send({
-      code: "alpha",
       name: "Google",
     });
     expect(response.statusCode).toEqual(400);
